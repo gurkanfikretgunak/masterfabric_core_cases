@@ -63,7 +63,12 @@ make codegen
 
 # Generate app icons (optional)
 make icons
+
+# Check iOS flavor configuration (macOS only)
+make ios-setup
 ```
+
+> **Note for iOS**: The project includes custom schemes (development, staging, production) for iOS builds. However, you need to configure build configurations in Xcode. Run `make ios-setup` for instructions, or see the [iOS Flavor Configuration](#ios-flavor-configuration) section below.
 
 ### Running the App
 
@@ -113,6 +118,9 @@ make build-prod   # Production
 Run `make help` to see all available commands:
 
 - `make setup` - Initial project setup
+- `make ios-setup` - Configure iOS flavors (requires Xcode)
+- `make ios-test` - Test iOS flavor configuration
+- `make test-scripts` - Run unit tests for build scripts
 - `make clean` - Clean build artifacts
 - `make codegen` - Run code generation
 - `make icons` - Generate app icons
@@ -120,6 +128,8 @@ Run `make help` to see all available commands:
 - `make run-dev/stg/prod` - Run specific flavor
 - `make build-dev/stg/prod` - Build specific flavor
 - `make build-all` - Build all flavors
+
+> 💡 **Testing**: See [TESTING.md](TESTING.md) for comprehensive testing documentation and troubleshooting.
 
 ## Key Dependencies
 
@@ -169,3 +179,67 @@ flutter test
 - [Flutter Documentation](https://docs.flutter.dev/)
 - [go_router Documentation](https://pub.dev/packages/go_router)
 - [flutter_bloc Documentation](https://bloclibrary.dev/)
+
+## iOS Flavor Configuration
+
+The project requires flavor-specific build configurations in Xcode for iOS builds. Follow these steps to set them up:
+
+### Option 1: Using Xcode (Recommended)
+
+1. Open the iOS project in Xcode:
+   ```bash
+   open ios/Runner.xcworkspace
+   ```
+
+2. Click on **Runner** in the project navigator (the blue icon at the top)
+
+3. Make sure you select the **Runner PROJECT** (not the Runner target)
+
+4. Under **Info** tab, expand **Configurations**
+
+5. For each flavor (development, staging, production), duplicate the Debug configuration:
+   - Click the **+** button below the configurations list
+   - Select **Duplicate "Debug" Configuration**
+   - Name it: `Debug-development`, `Debug-staging`, `Debug-production`
+
+6. Repeat for Release configurations:
+   - Duplicate "Release" Configuration three times
+   - Name them: `Release-development`, `Release-staging`, `Release-production`
+
+7. Repeat for Profile configurations:
+   - Duplicate "Profile" Configuration three times
+   - Name them: `Profile-development`, `Profile-staging`, `Profile-production`
+
+### Option 2: Running Without Flavors
+
+If you don't need flavor-specific configurations for iOS, you can run without the `--flavor` flag:
+
+```bash
+# Run on iOS without flavor
+flutter run -t lib/flavors/main_development.dart
+
+# For other flavors
+flutter run -t lib/flavors/main_staging.dart
+flutter run -t lib/flavors/main_production.dart
+```
+### Verifying the Setup
+
+After setting up the configurations, you can test them:
+
+```bash
+make ios-test
+```
+
+This will verify:
+- ✓ All scheme files exist and are valid
+- ✓ Build configurations are properly set up
+- ✓ Project structure is correct
+
+If all tests pass, you can run:
+
+```bash
+make run-dev   # or run-stg, run-prod
+```
+
+The custom schemes (development, staging, production) are already configured in the project.
+The custom schemes (development, staging, production) are already configured in the project.

@@ -26,4 +26,16 @@ class HomeCubit extends BaseViewModelCubit<HomeState> {
   void incrementCounter() {
     emit(state.copyWith(counter: state.counter + 1));
   }
+
+  /// Reset counter to zero
+  void resetCounter() {
+    emit(state.copyWith(counter: 0));
+  }
+
+  /// Decrement counter
+  void decrementCounter() {
+    if (state.counter > 0) {
+      emit(state.copyWith(counter: state.counter - 1));
+    }
+  }
 }

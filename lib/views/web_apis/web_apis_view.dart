@@ -743,10 +743,17 @@ class WebApisView extends MasterViewHydratedCubit<WebApisCubit, WebApisState> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(LucideIcons.check, color: Colors.white),
+                          Icon(
+                            LucideIcons.check,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           const SizedBox(width: 8),
-                          const Text('Passkey created successfully!'),
+                          const Flexible(
+                            child: Text('Passkey created successfully!'),
+                          ),
                         ],
                       ),
                       backgroundColor: Colors.green,
@@ -873,10 +880,11 @@ class WebApisView extends MasterViewHydratedCubit<WebApisCubit, WebApisState> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(LucideIcons.check, color: Colors.white),
+                Icon(LucideIcons.check, color: Colors.white, size: 20),
                 const SizedBox(width: 8),
-                const Text('Authentication successful!'),
+                const Flexible(child: Text('Authentication successful!')),
               ],
             ),
             backgroundColor: Colors.green,

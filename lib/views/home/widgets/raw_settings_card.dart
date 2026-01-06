@@ -99,13 +99,17 @@ class RawSettingsCard extends StatelessWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
                                           LucideIcons.check,
                                           color: Colors.white,
+                                          size: 20,
                                         ),
                                         const SizedBox(width: 8),
-                                        const Text('JSON copied!'),
+                                        const Flexible(
+                                          child: Text('JSON copied!'),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -157,31 +161,36 @@ class RawSettingsCard extends StatelessWidget {
                                   fontSize: 10,
                                   fontStyle: FontStyle.italic,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            _buildDataChip(
-                              LucideIcons.fileJson,
-                              'Keys: ${state.toJson().keys.length}',
-                              Colors.purple,
-                            ),
-                            _buildDataChip(
-                              LucideIcons.hardDrive,
-                              '${_calculateStorageSize(state.toJson())} bytes',
-                              Colors.cyan,
-                            ),
-                            _buildDataChip(
-                              LucideIcons.clock,
-                              'Auto-saved',
-                              Colors.green,
-                            ),
-                          ],
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              _buildDataChip(
+                                LucideIcons.fileJson,
+                                'Keys: ${state.toJson().keys.length}',
+                                Colors.purple,
+                              ),
+                              const SizedBox(width: 8),
+                              _buildDataChip(
+                                LucideIcons.hardDrive,
+                                '${_calculateStorageSize(state.toJson())} bytes',
+                                Colors.cyan,
+                              ),
+                              const SizedBox(width: 8),
+                              _buildDataChip(
+                                LucideIcons.clock,
+                                'Auto-saved',
+                                Colors.green,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

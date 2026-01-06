@@ -1,4 +1,4 @@
-.PHONY: help setup clean codegen icons build-dev build-stg build-prod run-dev run-stg run-prod build-all
+.PHONY: help setup clean codegen icons build-dev build-stg build-prod run-dev run-stg run-prod build-all ios-setup ios-test test-scripts
 
 # Colors for output
 GREEN  := $(shell tput -Txterm setaf 2)
@@ -22,6 +22,16 @@ setup: ## Initial project setup (run once)
 	@mkdir -p scripts assets/icons
 	@chmod +x scripts/*.sh 2>/dev/null || true
 	@echo "${GREEN}✅ Setup complete!${RESET}"
+
+test-scripts: ## Run unit tests for build scripts
+	@./scripts/test_scripts_unit.sh
+
+ios-test: ## Test iOS flavor configuration
+	@./scripts/test_ios_config.sh
+
+ios-setup: ## Configure iOS flavors (requires Xcode)
+	@echo "${BLUE}🍎 Checking iOS flavor configuration...${RESET}"
+	@./scripts/configure_ios_flavors.sh
 
 clean: ## Clean build artifacts
 	@echo "${BLUE}🧹 Cleaning build artifacts...${RESET}"

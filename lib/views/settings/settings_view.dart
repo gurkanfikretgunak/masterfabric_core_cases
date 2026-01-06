@@ -39,10 +39,15 @@ class SettingsView
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(LucideIcons.check, color: Colors.white),
+                          Icon(
+                            LucideIcons.check,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           SizedBox(width: 8),
-                          Text('Settings reset'),
+                          Flexible(child: Text('Settings reset')),
                         ],
                       ),
                     ),
@@ -1249,10 +1254,15 @@ class SettingsView
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(LucideIcons.check, color: Colors.white),
+                                Icon(
+                                  LucideIcons.check,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 8),
-                                const Text('JSON copied!'),
+                                const Flexible(child: Text('JSON copied!')),
                               ],
                             ),
                           ),
