@@ -28,7 +28,11 @@ class AppRoutes {
         ),
 
         // Home Route
-        GoRoute(path: home, builder: (context, state) => HomeView()),
+        GoRoute(
+          path: home,
+          builder: (context, state) =>
+              HomeView(goRoute: (path) => context.go(path)),
+        ),
 
         // Settings Route (HydratedCubit Example)
         GoRoute(

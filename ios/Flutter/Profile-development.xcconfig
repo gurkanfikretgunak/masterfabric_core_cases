@@ -1,0 +1,5 @@
+#include "Release.xcconfig"
+FLUTTER_BUILD_MODE=profile
+PRODUCT_BUNDLE_IDENTIFIER=com.masterfabric.core.cases.dev
+DISPLAY_NAME=MF Core Dev
+

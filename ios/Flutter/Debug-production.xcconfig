@@ -1,0 +1,5 @@
+#include "Debug.xcconfig"
+FLUTTER_BUILD_MODE=debug
+PRODUCT_BUNDLE_IDENTIFIER=com.masterfabric.core.cases
+DISPLAY_NAME=MF Core
+

@@ -63,6 +63,19 @@ run-dev: ## Run development flavor
 	@echo "${GREEN}🟢 Running DEVELOPMENT flavor...${RESET}"
 	@flutter run --flavor development -t lib/flavors/main_development.dart
 
+# Simple run commands (iOS-friendly, no flavor config required)
+run-ios-dev: ## Run on iOS without flavor (development entry point)
+	@echo "${GREEN}🍎 Running iOS DEVELOPMENT (no flavor)...${RESET}"
+	@flutter run -t lib/flavors/main_development.dart
+
+run-ios-stg: ## Run on iOS without flavor (staging entry point)
+	@echo "${YELLOW}🍎 Running iOS STAGING (no flavor)...${RESET}"
+	@flutter run -t lib/flavors/main_staging.dart
+
+run-ios-prod: ## Run on iOS without flavor (production entry point)
+	@echo "${BLUE}🍎 Running iOS PRODUCTION (no flavor)...${RESET}"
+	@flutter run -t lib/flavors/main_production.dart
+
 build-dev: prebuild ## Build development APK
 	@echo "${GREEN}📦 Building DEVELOPMENT APK...${RESET}"
 	@flutter build apk --flavor development -t lib/flavors/main_development.dart
