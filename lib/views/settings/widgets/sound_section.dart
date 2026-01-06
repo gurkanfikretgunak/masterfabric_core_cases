@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/_widgets/widgets.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_cubit.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_state.dart';
@@ -20,7 +21,18 @@ class SoundSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isVibrationAvailable = !kIsWeb;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        boxShadow: [
+          BoxShadow(
+            color: context.shadowColor,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           SettingSwitchTile(
@@ -32,7 +44,7 @@ class SoundSection extends StatelessWidget {
             onChanged: (_) => viewModel.toggleSoundEffects(),
           ),
           if (state.soundEffects) ...[
-            const Divider(height: 1),
+            Divider(height: 1, color: context.dividerColor),
             SettingSliderTile(
               title: 'Volume Level',
               subtitle: '${(state.volume * 100).toStringAsFixed(0)}%',
@@ -44,7 +56,7 @@ class SoundSection extends StatelessWidget {
               onChanged: viewModel.updateVolume,
             ),
           ],
-          const Divider(height: 1),
+          Divider(height: 1, color: context.dividerColor),
           _VibrationTile(
             state: state,
             viewModel: viewModel,
@@ -69,14 +81,32 @@ class _VibrationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDarkMode;
+    
     return ListTile(
-      leading: Icon(
-        LucideIcons.vibrate,
-        color: isAvailable ? Theme.of(context).primaryColor : Colors.grey,
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isAvailable 
+              ? AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1)
+              : context.surfaceVariantColor,
+          borderRadius: BorderRadius.circular(kRadius),
+        ),
+        child: Icon(
+          LucideIcons.vibrate,
+          color: isAvailable ? AppColors.primary : context.iconSecondaryColor,
+          size: 20,
+        ),
       ),
       title: Row(
         children: [
-          const Text('Vibration'),
+          Text(
+            'Vibration',
+            style: TextStyle(
+              color: isAvailable ? context.textPrimaryColor : context.textTertiaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           if (!isAvailable) ...[
             const SizedBox(width: 8),
             const PlatformUnavailableBadge(),
@@ -87,13 +117,16 @@ class _VibrationTile extends StatelessWidget {
         isAvailable
             ? (state.vibration ? 'Vibration on' : 'Vibration off')
             : 'This feature is only available on mobile devices',
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+        style: TextStyle(
+          fontSize: 12,
+          color: isAvailable ? context.textSecondaryColor : context.textTertiaryColor,
+        ),
       ),
       trailing: Switch(
         value: state.vibration && isAvailable,
         onChanged: isAvailable ? (_) => viewModel.toggleVibration() : null,
+        activeColor: AppColors.primary,
       ),
     );
   }
 }
-

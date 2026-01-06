@@ -3,12 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_cubit.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_state.dart';
 import 'dart:convert';
-
-/// Standard border radius
-const double _kRadius = 7.0;
 
 /// Raw Settings Card - Displays current settings state from HydratedCubit
 class RawSettingsCard extends StatelessWidget {
@@ -28,7 +26,7 @@ class RawSettingsCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(_kRadius),
+        borderRadius: BorderRadius.circular(kRadius),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -60,11 +58,11 @@ class RawSettingsCard extends StatelessWidget {
         
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(_kRadius),
+            color: context.cardColor,
+            borderRadius: BorderRadius.circular(kRadius),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
+                color: context.shadowColor,
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -77,36 +75,31 @@ class RawSettingsCard extends StatelessWidget {
             child: ExpansionTile(
               tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(_kRadius),
+                borderRadius: BorderRadius.circular(kRadius),
               ),
               collapsedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(_kRadius),
+                borderRadius: BorderRadius.circular(kRadius),
               ),
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF3E5F5),
-                  borderRadius: BorderRadius.circular(_kRadius),
-                ),
-                child: const Icon(
-                  LucideIcons.code,
-                  color: Color(0xFF9C27B0),
-                  size: 18,
-                ),
+              leading: ThemedWidgets.iconBox(
+                context: context,
+                icon: LucideIcons.code,
+                color: AppColors.purple,
+                backgroundColor: AppColors.purpleLight,
+                size: 40,
+                iconSize: 18,
               ),
-              title: const Text(
+              title: Text(
                 'Raw Settings Data',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
-                  color: Colors.black87,
+                  color: context.textPrimaryColor,
                 ),
               ),
               subtitle: Text(
                 'Live HydratedCubit state',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: context.textSecondaryColor,
                   fontSize: 12,
                 ),
               ),
@@ -114,8 +107,8 @@ class RawSettingsCard extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E),
-                    borderRadius: BorderRadius.circular(_kRadius),
+                    color: context.codeBackgroundColor,
+                    borderRadius: BorderRadius.circular(kRadius),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,16 +117,16 @@ class RawSettingsCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2D2D2D),
+                          color: context.codeHeaderColor,
                           borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(_kRadius),
+                            top: Radius.circular(kRadius),
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               LucideIcons.braces,
-                              color: Colors.green.shade400,
+                              color: context.codeTextColor,
                               size: 14,
                             ),
                             const SizedBox(width: 8),
@@ -141,7 +134,7 @@ class RawSettingsCard extends StatelessWidget {
                               child: Text(
                                 'settings_state.json',
                                 style: TextStyle(
-                                  color: Colors.grey.shade400,
+                                  color: context.textTertiaryColor,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
                                 ),
@@ -152,29 +145,24 @@ class RawSettingsCard extends StatelessWidget {
                                 Clipboard.setData(ClipboardData(text: jsonData));
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(_kRadius),
-                                    ),
-                                    backgroundColor: const Color(0xFF323232),
-                                    content: const Row(
+                                    content: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(LucideIcons.check, color: Color(0xFF4CAF50), size: 18),
-                                        SizedBox(width: 10),
-                                        Text('JSON copied to clipboard'),
+                                        Icon(LucideIcons.check, color: AppColors.success, size: 18),
+                                        const SizedBox(width: 10),
+                                        const Text('JSON copied to clipboard'),
                                       ],
                                     ),
                                     duration: const Duration(seconds: 2),
                                   ),
                                 );
                               },
-                              borderRadius: BorderRadius.circular(_kRadius),
+                              borderRadius: BorderRadius.circular(kRadius),
                               child: Padding(
                                 padding: const EdgeInsets.all(6),
                                 child: Icon(
                                   LucideIcons.copy,
-                                  color: Colors.grey.shade500,
+                                  color: context.iconSecondaryColor,
                                   size: 16,
                                 ),
                               ),
@@ -194,7 +182,7 @@ class RawSettingsCard extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'monospace',
                                 fontSize: 11,
-                                color: Colors.green.shade400,
+                                color: context.codeTextColor,
                                 height: 1.6,
                               ),
                             ),
@@ -205,9 +193,9 @@ class RawSettingsCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2D2D2D),
+                          color: context.codeHeaderColor,
                           borderRadius: BorderRadius.vertical(
-                            bottom: Radius.circular(_kRadius),
+                            bottom: Radius.circular(kRadius),
                           ),
                         ),
                         child: SingleChildScrollView(
@@ -217,19 +205,19 @@ class RawSettingsCard extends StatelessWidget {
                               _buildStatBadge(
                                 LucideIcons.key,
                                 '${state.toJson().keys.length} keys',
-                                const Color(0xFF9C27B0),
+                                AppColors.purple,
                               ),
                               const SizedBox(width: 8),
                               _buildStatBadge(
                                 LucideIcons.hardDrive,
                                 '${_calculateStorageSize(state.toJson())} bytes',
-                                const Color(0xFF00BCD4),
+                                AppColors.cyan,
                               ),
                               const SizedBox(width: 8),
                               _buildStatBadge(
                                 LucideIcons.zap,
                                 'Auto-sync',
-                                const Color(0xFF4CAF50),
+                                AppColors.success,
                               ),
                             ],
                           ),

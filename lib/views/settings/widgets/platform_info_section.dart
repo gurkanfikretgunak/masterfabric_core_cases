@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_core/masterfabric_core.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/_widgets/widgets.dart';
 
 /// Platform and device information section
@@ -14,32 +15,48 @@ class PlatformInfoSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceInfoHelper = DeviceInfoHelper.instance;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _PlatformRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            _DeviceNameRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            _DeviceModelRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            _ManufacturerRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            _SystemVersionRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            _DeviceIdRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            const _AppInfoSection(),
-            const Divider(height: 20),
-            _DeviceTypeRow(deviceInfoHelper: deviceInfoHelper),
-            const Divider(height: 20),
-            const _PlatformCapabilities(),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        boxShadow: [
+          BoxShadow(
+            color: context.shadowColor,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _PlatformRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          _DeviceNameRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          _DeviceModelRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          _ManufacturerRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          _SystemVersionRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          _DeviceIdRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          const _AppInfoSection(),
+          _buildDivider(context),
+          _DeviceTypeRow(deviceInfoHelper: deviceInfoHelper),
+          _buildDivider(context),
+          const _PlatformCapabilities(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Divider(height: 1, color: context.dividerColor),
     );
   }
 }
@@ -72,7 +89,7 @@ class _PlatformRow extends StatelessWidget {
         icon: LucideIcons.monitor,
         label: 'Platform',
         value: snapshot.data ?? 'Loading...',
-        color: kIsWeb ? Colors.blue : Colors.green,
+        color: kIsWeb ? AppColors.primary : AppColors.success,
       ),
     );
   }
@@ -91,7 +108,7 @@ class _DeviceNameRow extends StatelessWidget {
         icon: LucideIcons.smartphone,
         label: 'Device Name',
         value: snapshot.data ?? 'Loading...',
-        color: Colors.purple,
+        color: AppColors.purple,
       ),
     );
   }
@@ -110,7 +127,7 @@ class _DeviceModelRow extends StatelessWidget {
         icon: LucideIcons.cpu,
         label: 'Model',
         value: snapshot.data ?? 'Loading...',
-        color: Colors.orange,
+        color: AppColors.warning,
       ),
     );
   }
@@ -129,7 +146,7 @@ class _ManufacturerRow extends StatelessWidget {
         icon: LucideIcons.factory,
         label: 'Manufacturer',
         value: snapshot.data ?? 'Loading...',
-        color: Colors.red,
+        color: AppColors.error,
       ),
     );
   }
@@ -148,7 +165,7 @@ class _SystemVersionRow extends StatelessWidget {
         icon: LucideIcons.info,
         label: 'System Version',
         value: snapshot.hasData ? snapshot.data!.join(' ') : 'Loading...',
-        color: Colors.cyan,
+        color: AppColors.cyan,
       ),
     );
   }
@@ -172,7 +189,7 @@ class _DeviceIdRow extends StatelessWidget {
           icon: LucideIcons.hash,
           label: 'Device ID',
           value: displayValue,
-          color: Colors.teal,
+          color: AppColors.teal,
         );
       },
     );
@@ -193,22 +210,28 @@ class _AppInfoSection extends StatelessWidget {
               icon: LucideIcons.package,
               label: 'App Version',
               value: snapshot.hasData ? snapshot.data!.version : 'Loading...',
-              color: Colors.indigo,
+              color: AppColors.purple,
             ),
-            const Divider(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Divider(height: 1, color: context.dividerColor),
+            ),
             InfoRow(
               icon: LucideIcons.hash,
               label: 'Build Number',
               value:
                   snapshot.hasData ? snapshot.data!.buildNumber : 'Loading...',
-              color: Colors.pink,
+              color: AppColors.primary,
             ),
-            const Divider(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Divider(height: 1, color: context.dividerColor),
+            ),
             InfoRow(
               icon: LucideIcons.fileText,
               label: 'App Name',
               value: snapshot.hasData ? snapshot.data!.appName : 'Loading...',
-              color: Colors.amber,
+              color: AppColors.warning,
             ),
           ],
         );
@@ -232,7 +255,7 @@ class _DeviceTypeRow extends StatelessWidget {
           icon: isPhysical ? LucideIcons.smartphone : LucideIcons.monitor,
           label: 'Device Type',
           value: isPhysical ? 'Physical Device' : 'Emulator/Simulator',
-          color: isPhysical ? Colors.green : Colors.orange,
+          color: isPhysical ? AppColors.success : AppColors.warning,
         );
       },
     );
@@ -257,8 +280,8 @@ class _PlatformCapabilities extends StatelessWidget {
           'Platform Features',
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey.shade700,
+            fontWeight: FontWeight.w600,
+            color: context.textPrimaryColor,
           ),
         ),
         const SizedBox(height: 12),
@@ -312,4 +335,3 @@ class _PlatformCapabilities extends StatelessWidget {
     );
   }
 }
-

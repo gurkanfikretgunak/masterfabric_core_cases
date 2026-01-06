@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 
 enum MessageType { error, success, info, warning }
 
@@ -18,57 +19,53 @@ class MessageContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bgColor, borderColor, iconColor, textColor, icon) = switch (type) {
-      MessageType.error => (
-          Colors.red.shade50,
-          Colors.red.shade200,
-          Colors.red.shade700,
-          Colors.red.shade900,
-          LucideIcons.circleAlert,
-        ),
-      MessageType.success => (
-          Colors.green.shade50,
-          Colors.green.shade200,
-          Colors.green.shade700,
-          Colors.green.shade900,
-          LucideIcons.check,
-        ),
-      MessageType.info => (
-          Colors.blue.shade50,
-          Colors.blue.shade200,
-          Colors.blue.shade700,
-          Colors.blue.shade900,
-          LucideIcons.info,
-        ),
-      MessageType.warning => (
-          Colors.orange.shade50,
-          Colors.orange.shade200,
-          Colors.orange.shade700,
-          Colors.orange.shade900,
-          LucideIcons.triangleAlert,
-        ),
+    final isDark = context.isDarkMode;
+    
+    final (color, icon) = switch (type) {
+      MessageType.error => (AppColors.error, LucideIcons.circleAlert),
+      MessageType.success => (AppColors.success, LucideIcons.check),
+      MessageType.info => (AppColors.primary, LucideIcons.info),
+      MessageType.warning => (AppColors.warning, LucideIcons.triangleAlert),
     };
 
+    final bgColor = color.withValues(alpha: isDark ? 0.15 : 0.08);
+    final borderColor = color.withValues(alpha: isDark ? 0.4 : 0.25);
+
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(kRadius),
         border: Border.all(color: borderColor),
       ),
       child: Row(
         children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: isDark ? 0.25 : 0.15),
+              borderRadius: BorderRadius.circular(kRadius - 2),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               message,
-              style: TextStyle(color: textColor, fontSize: 12),
+              style: TextStyle(
+                color: isDark ? color : context.textPrimaryColor,
+                fontSize: 13,
+                height: 1.4,
+              ),
             ),
           ),
           if (onDismiss != null)
             IconButton(
-              icon: const Icon(LucideIcons.x, size: 16),
+              icon: Icon(
+                LucideIcons.x,
+                size: 16,
+                color: context.iconSecondaryColor,
+              ),
               onPressed: onDismiss,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -78,4 +75,3 @@ class MessageContainer extends StatelessWidget {
     );
   }
 }
-

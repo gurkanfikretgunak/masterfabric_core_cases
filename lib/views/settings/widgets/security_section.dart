@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/_widgets/widgets.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_cubit.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_state.dart';
@@ -20,7 +21,18 @@ class SecuritySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isBiometricAvailable = !kIsWeb;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        boxShadow: [
+          BoxShadow(
+            color: context.shadowColor,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           _BiometricTile(
@@ -28,7 +40,7 @@ class SecuritySection extends StatelessWidget {
             viewModel: viewModel,
             isAvailable: isBiometricAvailable,
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: context.dividerColor),
           SettingSwitchTile(
             title: 'PIN Lock',
             subtitle: 'Require PIN on app launch',
@@ -36,7 +48,7 @@ class SecuritySection extends StatelessWidget {
             icon: LucideIcons.keyRound,
             onChanged: (_) => viewModel.togglePinLock(),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: context.dividerColor),
           SettingSwitchTile(
             title: 'Auto Lock',
             subtitle: state.autoLock
@@ -47,7 +59,7 @@ class SecuritySection extends StatelessWidget {
             onChanged: (_) => viewModel.toggleAutoLock(),
           ),
           if (state.autoLock) ...[
-            const Divider(height: 1),
+            Divider(height: 1, color: context.dividerColor),
             SettingSliderTile(
               title: 'Auto Lock Time',
               subtitle: '${state.autoLockTimeout} minutes',
@@ -78,17 +90,33 @@ class _BiometricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDarkMode;
+    
     return ListTile(
-      leading: Icon(
-        LucideIcons.fingerprint,
-        color: isAvailable ? Theme.of(context).primaryColor : Colors.grey,
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isAvailable 
+              ? AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1)
+              : context.surfaceVariantColor,
+          borderRadius: BorderRadius.circular(kRadius),
+        ),
+        child: Icon(
+          LucideIcons.fingerprint,
+          color: isAvailable ? AppColors.primary : context.iconSecondaryColor,
+          size: 20,
+        ),
       ),
       title: Row(
         children: [
-          const Flexible(
+          Flexible(
             child: Text(
               'Biometric Authentication',
               overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: isAvailable ? context.textPrimaryColor : context.textTertiaryColor,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           if (!isAvailable) ...[
@@ -101,13 +129,16 @@ class _BiometricTile extends StatelessWidget {
         isAvailable
             ? 'Fingerprint / Face recognition'
             : 'This feature is only available on mobile/desktop apps',
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+        style: TextStyle(
+          fontSize: 12,
+          color: isAvailable ? context.textSecondaryColor : context.textTertiaryColor,
+        ),
       ),
       trailing: Switch(
         value: state.biometricAuth && isAvailable,
         onChanged: isAvailable ? (_) => viewModel.toggleBiometricAuth() : null,
+        activeColor: AppColors.primary,
       ),
     );
   }
 }
-

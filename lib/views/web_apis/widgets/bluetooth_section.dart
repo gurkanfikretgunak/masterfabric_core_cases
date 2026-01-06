@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/_widgets/widgets.dart';
 import 'package:masterfabric_core_cases/views/web_apis/cubit/web_apis_cubit.dart';
 import 'package:masterfabric_core_cases/views/web_apis/cubit/web_apis_state.dart';
@@ -18,40 +19,49 @@ class BluetoothSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ScanButton(state: state, viewModel: viewModel),
-            if (state.scanError != null) ...[
-              const SizedBox(height: 12),
-              MessageContainer(
-                message: state.scanError!,
-                type: MessageType.error,
-                onDismiss: viewModel.clearScanError,
-              ),
-            ],
-            if (state.bluetoothDevices.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              _DeviceListHeader(
-                count: state.bluetoothDevices.length,
-                onClear: viewModel.clearDevices,
-              ),
-              const Divider(),
-              ...state.bluetoothDevices.map(
-                (device) => _DeviceItem(
-                  device: device,
-                  viewModel: viewModel,
-                ),
-              ),
-            ] else if (!state.isScanning) ...[
-              const SizedBox(height: 16),
-              const _EmptyState(),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        boxShadow: [
+          BoxShadow(
+            color: context.shadowColor,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ScanButton(state: state, viewModel: viewModel),
+          if (state.scanError != null) ...[
+            const SizedBox(height: 12),
+            MessageContainer(
+              message: state.scanError!,
+              type: MessageType.error,
+              onDismiss: viewModel.clearScanError,
+            ),
           ],
-        ),
+          if (state.bluetoothDevices.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _DeviceListHeader(
+              count: state.bluetoothDevices.length,
+              onClear: viewModel.clearDevices,
+            ),
+            Divider(color: context.dividerColor),
+            ...state.bluetoothDevices.map(
+              (device) => _DeviceItem(
+                device: device,
+                viewModel: viewModel,
+              ),
+            ),
+          ] else if (!state.isScanning) ...[
+            const SizedBox(height: 16),
+            const _EmptyState(),
+          ],
+        ],
       ),
     );
   }
@@ -65,16 +75,38 @@ class _ScanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDarkMode;
+    final enabled = state.bluetoothEnabled && !state.isScanning;
+    
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: state.bluetoothEnabled && !state.isScanning
-            ? viewModel.scanForDevices
-            : null,
-        icon: Icon(state.isScanning ? LucideIcons.loader : LucideIcons.search),
-        label: Text(state.isScanning ? 'Scanning...' : 'Scan for Devices'),
+      child: ElevatedButton(
+        onPressed: enabled ? viewModel.scanForDevices : null,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: enabled 
+              ? AppColors.primary 
+              : (isDark ? AppColors.dark.surfaceVariant : AppColors.light.surfaceVariant),
+          foregroundColor: enabled 
+              ? Colors.white 
+              : context.textTertiaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kRadius),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              state.isScanning ? LucideIcons.loader : LucideIcons.search,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              state.isScanning ? 'Scanning...' : 'Scan for Devices',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
       ),
     );
@@ -94,12 +126,19 @@ class _DeviceListHeader extends StatelessWidget {
       children: [
         Text(
           'Discovered Devices ($count)',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: context.textPrimaryColor,
+          ),
         ),
         TextButton.icon(
           onPressed: onClear,
-          icon: const Icon(LucideIcons.trash2, size: 14),
-          label: const Text('Clear All'),
+          icon: Icon(LucideIcons.trash2, size: 14, color: AppColors.error),
+          label: Text(
+            'Clear All',
+            style: TextStyle(color: AppColors.error),
+          ),
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,
@@ -120,86 +159,110 @@ class _DeviceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, HH:mm');
+    final isDark = context.isDarkMode;
+    final connectedColor = AppColors.success;
+    final disconnectedColor = context.iconSecondaryColor;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: device.connected
-                ? Colors.green.shade100
-                : Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            LucideIcons.bluetooth,
-            color:
-                device.connected ? Colors.green.shade700 : Colors.grey.shade600,
-            size: 24,
-          ),
-        ),
-        title: Text(
-          device.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'ID: ${device.id.length > 20 ? "${device.id.substring(0, 20)}..." : device.id}',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: context.surfaceVariantColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        border: Border.all(color: context.borderColor),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: device.connected
+                  ? connectedColor.withValues(alpha: isDark ? 0.2 : 0.15)
+                  : context.cardSecondaryColor,
+              borderRadius: BorderRadius.circular(kRadius),
             ),
-            Text(
-              'Last seen: ${dateFormat.format(device.lastSeen)}',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            child: Icon(
+              LucideIcons.bluetooth,
+              color: device.connected ? connectedColor : disconnectedColor,
+              size: 22,
             ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (device.connected)
-              Chip(
-                label: const Text('Connected', style: TextStyle(fontSize: 10)),
-                backgroundColor: Colors.green.shade100,
-                padding: EdgeInsets.zero,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            const SizedBox(width: 8),
-            PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  onTap: () => device.connected
-                      ? viewModel.disconnectDevice(device.id)
-                      : viewModel.connectDevice(device.id),
-                  child: Row(
-                    children: [
-                      Icon(
-                        device.connected
-                            ? LucideIcons.plugZap
-                            : LucideIcons.plug,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(device.connected ? 'Disconnect' : 'Connect'),
-                    ],
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  device.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: context.textPrimaryColor,
                   ),
                 ),
-                PopupMenuItem(
-                  onTap: () => viewModel.removeDevice(device.id),
-                  child: const Row(
-                    children: [
-                      Icon(LucideIcons.trash2, size: 16, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Remove', style: TextStyle(color: Colors.red)),
-                    ],
-                  ),
+                const SizedBox(height: 4),
+                Text(
+                  'ID: ${device.id.length > 20 ? "${device.id.substring(0, 20)}..." : device.id}',
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                ),
+                Text(
+                  'Last seen: ${dateFormat.format(device.lastSeen)}',
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          if (device.connected)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: connectedColor.withValues(alpha: isDark ? 0.2 : 0.15),
+                borderRadius: BorderRadius.circular(kRadius - 2),
+              ),
+              child: Text(
+                'Connected',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: connectedColor,
+                ),
+              ),
+            ),
+          const SizedBox(width: 8),
+          PopupMenuButton(
+            icon: Icon(LucideIcons.ellipsisVertical, color: context.iconSecondaryColor, size: 18),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                onTap: () => device.connected
+                    ? viewModel.disconnectDevice(device.id)
+                    : viewModel.connectDevice(device.id),
+                child: Row(
+                  children: [
+                    Icon(
+                      device.connected ? LucideIcons.plugZap : LucideIcons.plug,
+                      size: 16,
+                      color: context.textPrimaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      device.connected ? 'Disconnect' : 'Connect',
+                      style: TextStyle(color: context.textPrimaryColor),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                onTap: () => viewModel.removeDevice(device.id),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.trash2, size: 16, color: AppColors.error),
+                    const SizedBox(width: 8),
+                    Text('Remove', style: TextStyle(color: AppColors.error)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -213,17 +276,22 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          Icon(LucideIcons.bluetooth, size: 48, color: Colors.grey.shade400),
+          Icon(LucideIcons.bluetooth, size: 48, color: context.iconSecondaryColor),
           const SizedBox(height: 8),
-          Text('No devices found', style: TextStyle(color: Colors.grey.shade600)),
+          Text(
+            'No devices found',
+            style: TextStyle(
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             'Click "Scan for Devices" to start',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+            style: TextStyle(color: context.textTertiaryColor, fontSize: 12),
           ),
         ],
       ),
     );
   }
 }
-

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/_widgets/widgets.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_cubit.dart';
 import 'package:masterfabric_core_cases/views/settings/cubit/settings_state.dart';
@@ -17,7 +18,18 @@ class NetworkSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        boxShadow: [
+          BoxShadow(
+            color: context.shadowColor,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           SettingSwitchTile(
@@ -27,7 +39,7 @@ class NetworkSection extends StatelessWidget {
             icon: LucideIcons.wifi,
             onChanged: (_) => viewModel.toggleWifiOnlyDownload(),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: context.dividerColor),
           SettingSwitchTile(
             title: 'Auto Update',
             subtitle: 'Automatically download updates',
@@ -35,7 +47,7 @@ class NetworkSection extends StatelessWidget {
             icon: LucideIcons.download,
             onChanged: (_) => viewModel.toggleAutoDownloadUpdates(),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: context.dividerColor),
           SettingSliderTile(
             title: 'Maximum Cache Size',
             subtitle: '${state.maxCacheSize.toStringAsFixed(0)} MB',
@@ -51,4 +63,3 @@ class NetworkSection extends StatelessWidget {
     );
   }
 }
-

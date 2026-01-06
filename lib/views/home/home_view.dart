@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:masterfabric_core/masterfabric_core.dart' hide Spacer, AppRoutes;
 import 'package:masterfabric_core_cases/views/home/cubit/home_cubit.dart';
 import 'package:masterfabric_core_cases/views/home/widgets/raw_settings_card.dart';
+import 'package:masterfabric_core_cases/views/settings/cubit/settings_cubit.dart';
+import 'package:masterfabric_core_cases/views/settings/cubit/settings_state.dart';
 import 'package:masterfabric_core_cases/app/routes.dart';
-
-/// Standard border radius used across the app
-const double _kRadius = 7.0;
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 
 /// Home screen view using MasterViewCubit from masterfabric_core
 class HomeView extends MasterViewCubit<HomeCubit, HomeState> {
@@ -14,31 +16,7 @@ class HomeView extends MasterViewCubit<HomeCubit, HomeState> {
       : super(
           currentView: MasterViewCubitTypes.content,
           arguments: const {'title': 'Home'},
-          coreAppBar: (context, viewModel) => _buildAppBar(context, goRoute),
         );
-
-  static AppBar _buildAppBar(BuildContext context, Function(String) goRoute) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black87,
-      centerTitle: false,
-      title: const Text(
-        'MasterFabric Core',
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 18,
-        ),
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(LucideIcons.settings, size: 20),
-          tooltip: 'Settings',
-          onPressed: () => goRoute(AppRoutes.settings),
-        ),
-      ],
-    );
-  }
 
   @override
   Future<void> initialContent(HomeCubit viewModel, BuildContext context) async {
@@ -52,184 +30,280 @@ class HomeView extends MasterViewCubit<HomeCubit, HomeState> {
     HomeCubit viewModel,
     HomeState state,
   ) {
+    final settingsCubit = GetIt.instance<SettingsCubit>();
+
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      bloc: settingsCubit,
+      builder: (context, settingsState) {
+        final isDark = settingsState.isDarkMode;
+        final primary = AppColors.getThemeColor(settingsState.primaryColor);
+        final appBarBg = isDark ? AppColors.dark.appBar : AppColors.light.appBar;
+        final appBarFg = isDark ? AppColors.dark.appBarForeground : AppColors.light.appBarForeground;
+        final iconColor = isDark ? AppColors.dark.icon : AppColors.light.icon;
+        final scaffoldBg = isDark ? AppColors.dark.scaffold : AppColors.light.scaffold;
+
         return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-          body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Welcome Card
-            _WhiteCard(
-            child: Column(
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8F5E9),
-                      borderRadius: BorderRadius.circular(_kRadius),
-                    ),
-                    child: const Icon(
-                      LucideIcons.circleCheck,
-                      color: Color(0xFF4CAF50),
-                      size: 28,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Welcome!',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Successfully passed through Splash Screen',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Counter Card
-            _WhiteCard(
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE3F2FD),
-                      borderRadius: BorderRadius.circular(_kRadius),
-                    ),
-                    child: const Icon(
-                      LucideIcons.hash,
-                      color: Color(0xFF2196F3),
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Counter',
-                        style: TextStyle(
-                            fontSize: 13,
-                          color: Colors.grey.shade600,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${state.counter}',
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: viewModel.resetCounter,
-                    icon: Icon(
-                      LucideIcons.rotateCcw,
-                      size: 18,
-                      color: Colors.grey.shade500,
-                    ),
-                    tooltip: 'Reset',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Navigation Section
-            Text(
-              'Navigate',
+          backgroundColor: scaffoldBg,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: appBarBg,
+            foregroundColor: appBarFg,
+            centerTitle: false,
+            title: Text(
+              'MasterFabric Core',
               style: TextStyle(
-                fontSize: 13,
+                color: appBarFg,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
-                letterSpacing: 0.5,
+                fontSize: 18,
               ),
             ),
-            const SizedBox(height: 12),
-            _NavigationTile(
-              icon: LucideIcons.settings,
-              title: 'Settings',
-              subtitle: 'HydratedCubit persistent state',
-              onTap: () => goRoute(AppRoutes.settings),
-            ),
-            const SizedBox(height: 10),
-            _NavigationTile(
-              icon: LucideIcons.bluetooth,
-              title: 'Web APIs',
-              subtitle: 'Bluetooth & Passkeys integration',
-              onTap: () => goRoute(AppRoutes.webApis),
-              iconColor: const Color(0xFF7C4DFF),
-              iconBgColor: const Color(0xFFEDE7F6),
+            iconTheme: IconThemeData(color: iconColor),
+            actions: [
+              // Theme toggle button
+              IconButton(
+                icon: Icon(
+                  isDark ? LucideIcons.sun : LucideIcons.moon,
+                  size: 20,
+                  color: iconColor,
                 ),
-                const SizedBox(height: 32),
-
-            // Divider with explanation
-            _SectionDivider(
-              icon: LucideIcons.database,
-              title: 'Developer Debug',
-              description:
-                  'This section shows the raw state data from HydratedCubit. '
-                  'It demonstrates how state persistence works - all settings '
-                  'are automatically serialized to JSON and saved locally.',
-            ),
-            const SizedBox(height: 16),
-
-            // Raw Settings Card
-                const RawSettingsCard(),
-            const SizedBox(height: 80),
-              ],
-            ),
+                tooltip: isDark ? 'Light Mode' : 'Dark Mode',
+                onPressed: () {
+                  settingsCubit.toggleDarkMode();
+                },
+              ),
+              // Settings button
+              IconButton(
+                icon: Icon(LucideIcons.settings, size: 20, color: iconColor),
+                tooltip: 'Settings',
+                onPressed: () => goRoute(AppRoutes.settings),
+              ),
+            ],
+          ),
+          body: _HomeContent(
+            viewModel: viewModel,
+            homeState: state,
+            settingsState: settingsState,
+            goRoute: goRoute,
+            primary: primary,
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: viewModel.incrementCounter,
             tooltip: 'Increment',
-        backgroundColor: Colors.black87,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(_kRadius + 5),
-        ),
-        child: const Icon(LucideIcons.plus, size: 22),
-      ),
+            backgroundColor: primary.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(LucideIcons.plus, size: 22),
+          ),
+        );
+      },
     );
   }
 }
 
-/// White card container with standard radius
-class _WhiteCard extends StatelessWidget {
-  final Widget child;
+/// Home content widget
+class _HomeContent extends StatelessWidget {
+  final HomeCubit viewModel;
+  final HomeState homeState;
+  final SettingsState settingsState;
+  final Function(String) goRoute;
+  final ThemeColorPalette primary;
 
-  const _WhiteCard({required this.child});
+  const _HomeContent({
+    required this.viewModel,
+    required this.homeState,
+    required this.settingsState,
+    required this.goRoute,
+    required this.primary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = settingsState.isDarkMode;
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Welcome Card
+          _ThemedCard(
+            isDark: isDark,
+            child: Column(
+              children: [
+                _buildIconBox(
+                  isDark: isDark,
+                  icon: LucideIcons.circleCheck,
+                  color: AppColors.success,
+                  backgroundColor: AppColors.successLight,
+                  size: 56,
+                  iconSize: 28,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Welcome!',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Successfully passed through Splash Screen',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Counter Card
+          _ThemedCard(
+            isDark: isDark,
+            child: Row(
+              children: [
+                _buildIconBox(
+                  isDark: isDark,
+                  icon: LucideIcons.hash,
+                  color: primary.primary,
+                  backgroundColor: primary.primaryLight,
+                  size: 48,
+                  iconSize: 22,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Counter',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${homeState.counter}',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: primary.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: viewModel.resetCounter,
+                  icon: Icon(
+                    LucideIcons.rotateCcw,
+                    size: 18,
+                    color: isDark ? AppColors.dark.iconSecondary : AppColors.light.iconSecondary,
+                  ),
+                  tooltip: 'Reset',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Navigation Section
+          Text(
+            'Navigate',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          _NavigationTile(
+            isDark: isDark,
+            icon: LucideIcons.settings,
+            title: 'Settings',
+            subtitle: 'HydratedCubit persistent state',
+            onTap: () => goRoute(AppRoutes.settings),
+            iconColor: primary.primary,
+            iconBgColor: primary.primaryLight,
+          ),
+          const SizedBox(height: 10),
+          _NavigationTile(
+            isDark: isDark,
+            icon: LucideIcons.bluetooth,
+            title: 'Web APIs',
+            subtitle: 'Bluetooth & Passkeys integration',
+            onTap: () => goRoute(AppRoutes.webApis),
+            iconColor: AppColors.purple,
+            iconBgColor: AppColors.purpleLight,
+          ),
+          const SizedBox(height: 32),
+
+          // Divider with explanation
+          _SectionDivider(
+            isDark: isDark,
+            icon: LucideIcons.database,
+            title: 'Developer Debug',
+            description:
+                'This section shows the raw state data from HydratedCubit. '
+                'It demonstrates how state persistence works - all settings '
+                'are automatically serialized to JSON and saved locally.',
+          ),
+          const SizedBox(height: 16),
+
+          // Raw Settings Card
+          const RawSettingsCard(),
+          const SizedBox(height: 80),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconBox({
+    required bool isDark,
+    required IconData icon,
+    Color? color,
+    Color? backgroundColor,
+    double size = 44,
+    double iconSize = 20,
+  }) {
+    final iconColor = color ?? primary.primary;
+    final bgColor = backgroundColor ?? primary.primaryLight;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: isDark ? iconColor.withValues(alpha: 0.2) : bgColor,
+        borderRadius: BorderRadius.circular(kRadius),
+      ),
+      child: Icon(icon, color: iconColor, size: iconSize),
+    );
+  }
+}
+
+/// Themed card container with standard radius
+class _ThemedCard extends StatelessWidget {
+  final Widget child;
+  final bool isDark;
+
+  const _ThemedCard({required this.child, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(_kRadius),
+        color: isDark ? AppColors.dark.card : AppColors.light.card,
+        borderRadius: BorderRadius.circular(kRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: isDark ? AppColors.dark.shadow : AppColors.light.shadow,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -248,32 +322,39 @@ class _NavigationTile extends StatelessWidget {
   final VoidCallback onTap;
   final Color? iconColor;
   final Color? iconBgColor;
+  final bool isDark;
 
   const _NavigationTile({
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.onTap,
+    required this.isDark,
     this.iconColor,
     this.iconBgColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = iconColor ?? const Color(0xFF2196F3);
-    final bgColor = iconBgColor ?? const Color(0xFFE3F2FD);
+    final color = iconColor ?? AppColors.primary;
+    final bgColor = iconBgColor ?? AppColors.primaryLight;
+    final cardColor = isDark ? AppColors.dark.card : AppColors.light.card;
+    final borderColor = isDark ? AppColors.dark.border : AppColors.light.border;
+    final textPrimary = isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary;
+    final textSecondary = isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary;
+    final iconSecondary = isDark ? AppColors.dark.iconSecondary : AppColors.light.iconSecondary;
 
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(_kRadius),
+      color: cardColor,
+      borderRadius: BorderRadius.circular(kRadius),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(_kRadius),
+        borderRadius: BorderRadius.circular(kRadius),
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(_kRadius),
-            border: Border.all(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(kRadius),
+            border: Border.all(color: borderColor),
           ),
           child: Row(
             children: [
@@ -281,8 +362,8 @@ class _NavigationTile extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(_kRadius),
+                  color: isDark ? color.withValues(alpha: 0.2) : bgColor,
+                  borderRadius: BorderRadius.circular(kRadius),
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
@@ -293,10 +374,10 @@ class _NavigationTile extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -304,7 +385,7 @@ class _NavigationTile extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: textSecondary,
                       ),
                     ),
                   ],
@@ -313,7 +394,7 @@ class _NavigationTile extends StatelessWidget {
               Icon(
                 LucideIcons.chevronRight,
                 size: 18,
-                color: Colors.grey.shade400,
+                color: iconSecondary,
               ),
             ],
           ),
@@ -328,64 +409,74 @@ class _SectionDivider extends StatelessWidget {
   final IconData icon;
   final String title;
   final String description;
+  final bool isDark;
 
   const _SectionDivider({
     required this.icon,
     required this.title,
     required this.description,
+    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final dividerColor = isDark ? AppColors.dark.divider : AppColors.light.divider;
+    final surfaceVariant = isDark ? AppColors.dark.surfaceVariant : AppColors.light.surfaceVariant;
+    final iconSecondary = isDark ? AppColors.dark.iconSecondary : AppColors.light.iconSecondary;
+    final textSecondary = isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary;
+    final infoBackground = isDark ? AppColors.dark.infoBackground : AppColors.light.infoBackground;
+    final infoBorder = isDark ? AppColors.dark.infoBorder : AppColors.light.infoBorder;
+    final infoIcon = isDark ? AppColors.dark.infoIcon : AppColors.light.infoIcon;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Expanded(child: Divider(color: Colors.grey.shade300)),
+            Expanded(child: Divider(color: dividerColor)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(_kRadius),
+                  color: surfaceVariant,
+                  borderRadius: BorderRadius.circular(kRadius),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(icon, size: 14, color: Colors.grey.shade600),
+                    Icon(icon, size: 14, color: iconSecondary),
                     const SizedBox(width: 6),
                     Text(
                       title,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade700,
+                        color: textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            Expanded(child: Divider(color: Colors.grey.shade300)),
+            Expanded(child: Divider(color: dividerColor)),
           ],
         ),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF8E1),
-            borderRadius: BorderRadius.circular(_kRadius),
-            border: Border.all(color: const Color(0xFFFFE082)),
+            color: infoBackground,
+            borderRadius: BorderRadius.circular(kRadius),
+            border: Border.all(color: infoBorder),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.lightbulb,
                 size: 16,
-                color: Color(0xFFF9A825),
+                color: infoIcon,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -393,7 +484,7 @@ class _SectionDivider extends StatelessWidget {
                   description,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade700,
+                    color: textSecondary,
                     height: 1.5,
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:masterfabric_core_cases/app/theme/theme.dart';
 import 'package:masterfabric_core_cases/views/_widgets/widgets.dart';
 import 'package:masterfabric_core_cases/views/web_apis/cubit/web_apis_cubit.dart';
 import 'package:masterfabric_core_cases/views/web_apis/cubit/web_apis_state.dart';
@@ -20,49 +21,58 @@ class PasskeySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _CreatePasskeyButton(state: state, viewModel: viewModel),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        boxShadow: [
+          BoxShadow(
+            color: context.shadowColor,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CreatePasskeyButton(state: state, viewModel: viewModel),
+          const SizedBox(height: 12),
+          _AuthenticateButton(state: state, viewModel: viewModel),
+          if (state.lastSuccessfulAuth != null) ...[
             const SizedBox(height: 12),
-            _AuthenticateButton(state: state, viewModel: viewModel),
-            if (state.lastSuccessfulAuth != null) ...[
-              const SizedBox(height: 12),
-              MessageContainer(
-                message: 'Last authenticated: ${state.lastSuccessfulAuth}',
-                type: MessageType.success,
-              ),
-            ],
-            if (state.authError != null) ...[
-              const SizedBox(height: 12),
-              MessageContainer(
-                message: state.authError!,
-                type: MessageType.error,
-                onDismiss: viewModel.clearAuthError,
-              ),
-            ],
-            if (state.passkeys.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              _PasskeyListHeader(
-                count: state.passkeys.length,
-                onClear: viewModel.clearPasskeys,
-              ),
-              const Divider(),
-              ...state.passkeys.map(
-                (passkey) => _PasskeyItem(
-                  passkey: passkey,
-                  viewModel: viewModel,
-                ),
-              ),
-            ] else if (!state.isAuthenticating) ...[
-              const SizedBox(height: 16),
-              const _EmptyState(),
-            ],
+            MessageContainer(
+              message: 'Last authenticated: ${state.lastSuccessfulAuth}',
+              type: MessageType.success,
+            ),
           ],
-        ),
+          if (state.authError != null) ...[
+            const SizedBox(height: 12),
+            MessageContainer(
+              message: state.authError!,
+              type: MessageType.error,
+              onDismiss: viewModel.clearAuthError,
+            ),
+          ],
+          if (state.passkeys.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _PasskeyListHeader(
+              count: state.passkeys.length,
+              onClear: viewModel.clearPasskeys,
+            ),
+            Divider(color: context.dividerColor),
+            ...state.passkeys.map(
+              (passkey) => _PasskeyItem(
+                passkey: passkey,
+                viewModel: viewModel,
+              ),
+            ),
+          ] else if (!state.isAuthenticating) ...[
+            const SizedBox(height: 16),
+            const _EmptyState(),
+          ],
+        ],
       ),
     );
   }
@@ -76,18 +86,33 @@ class _CreatePasskeyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = state.passkeyEnabled && !state.isAuthenticating;
+    final isDark = context.isDarkMode;
+    
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: state.passkeyEnabled && !state.isAuthenticating
-            ? () => _showCreatePasskeyDialog(context, viewModel)
-            : null,
-        icon: const Icon(LucideIcons.keyRound),
-        label: const Text('Create New Passkey'),
+      child: ElevatedButton(
+        onPressed: enabled ? () => _showCreatePasskeyDialog(context, viewModel) : null,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.white,
+          backgroundColor: enabled 
+              ? AppColors.success 
+              : (isDark ? AppColors.dark.surfaceVariant : AppColors.light.surfaceVariant),
+          foregroundColor: enabled ? Colors.white : context.textTertiaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kRadius),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(LucideIcons.keyRound, size: 18),
+            const SizedBox(width: 10),
+            const Text(
+              'Create New Passkey',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
       ),
     );
@@ -96,15 +121,25 @@ class _CreatePasskeyButton extends StatelessWidget {
   void _showCreatePasskeyDialog(BuildContext context, WebApisCubit viewModel) {
     final usernameController = TextEditingController();
     final displayNameController = TextEditingController();
+    final isDark = context.isDarkMode;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        backgroundColor: isDark ? AppColors.dark.dialogBackground : AppColors.light.dialogBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kRadius + 5),
+        ),
+        title: Row(
           children: [
-            Icon(LucideIcons.keyRound),
-            SizedBox(width: 8),
-            Text('Create Passkey'),
+            Icon(LucideIcons.keyRound, color: AppColors.success),
+            const SizedBox(width: 8),
+            Text(
+              'Create Passkey',
+              style: TextStyle(
+                color: isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -112,21 +147,39 @@ class _CreatePasskeyButton extends StatelessWidget {
           children: [
             TextField(
               controller: usernameController,
-              decoration: const InputDecoration(
+              style: TextStyle(
+                color: isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary,
+              ),
+              decoration: InputDecoration(
                 labelText: 'Username',
                 hintText: 'Enter username',
-                prefixIcon: Icon(LucideIcons.user),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(LucideIcons.user),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(kRadius),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(kRadius),
+                  borderSide: BorderSide(color: AppColors.primary, width: 2),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: displayNameController,
-              decoration: const InputDecoration(
+              style: TextStyle(
+                color: isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary,
+              ),
+              decoration: InputDecoration(
                 labelText: 'Display Name (Optional)',
                 hintText: 'Enter display name',
-                prefixIcon: Icon(LucideIcons.userRound),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(LucideIcons.userRound),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(kRadius),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(kRadius),
+                  borderSide: BorderSide(color: AppColors.primary, width: 2),
+                ),
               ),
             ),
           ],
@@ -134,7 +187,10 @@ class _CreatePasskeyButton extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -149,22 +205,27 @@ class _CreatePasskeyButton extends StatelessWidget {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
+                      backgroundColor: AppColors.success,
                       content: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(LucideIcons.check, color: Colors.white, size: 20),
                           const SizedBox(width: 8),
-                          const Flexible(
-                            child: Text('Passkey created successfully!'),
-                          ),
+                          const Flexible(child: Text('Passkey created successfully!')),
                         ],
                       ),
-                      backgroundColor: Colors.green,
                     ),
                   );
                 }
               }
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.success,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(kRadius),
+              ),
+            ),
             child: const Text('Create'),
           ),
         ],
@@ -181,22 +242,36 @@ class _AuthenticateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = state.passkeyEnabled && !state.isAuthenticating;
+    final isDark = context.isDarkMode;
+    
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: state.passkeyEnabled && !state.isAuthenticating
-            ? () => _authenticateWithAlert(context, viewModel)
-            : null,
-        icon: Icon(
-          state.isAuthenticating ? LucideIcons.loader : LucideIcons.lockOpen,
-        ),
-        label: Text(
-          state.isAuthenticating
-              ? 'Authenticating...'
-              : 'Authenticate with Passkey',
-        ),
+      child: ElevatedButton(
+        onPressed: enabled ? () => _authenticateWithAlert(context, viewModel) : null,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: enabled 
+              ? AppColors.primary 
+              : (isDark ? AppColors.dark.surfaceVariant : AppColors.light.surfaceVariant),
+          foregroundColor: enabled ? Colors.white : context.textTertiaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kRadius),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              state.isAuthenticating ? LucideIcons.loader : LucideIcons.lockOpen,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              state.isAuthenticating ? 'Authenticating...' : 'Authenticate with Passkey',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
       ),
     );
@@ -206,23 +281,37 @@ class _AuthenticateButton extends StatelessWidget {
     BuildContext context,
     WebApisCubit viewModel,
   ) async {
+    final isDark = context.isDarkMode;
+    
     final shouldContinue = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        backgroundColor: isDark ? AppColors.dark.dialogBackground : AppColors.light.dialogBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kRadius + 5),
+        ),
+        title: Row(
           children: [
-            Icon(LucideIcons.fingerprint, color: Colors.green),
-            SizedBox(width: 8),
-            Text('Authenticate with Passkey'),
+            Icon(LucideIcons.fingerprint, color: AppColors.success),
+            const SizedBox(width: 8),
+            Text(
+              'Authenticate with Passkey',
+              style: TextStyle(
+                color: isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary,
+              ),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'This will trigger platform authentication:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.dark.textPrimary : AppColors.light.textPrimary,
+              ),
             ),
             const SizedBox(height: 12),
             const _PlatformAuthInfo(),
@@ -230,18 +319,23 @@ class _AuthenticateButton extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.shade200),
+                color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+                borderRadius: BorderRadius.circular(kRadius),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: isDark ? 0.3 : 0.2),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(LucideIcons.info, color: Colors.blue.shade700, size: 20),
+                  Icon(LucideIcons.info, color: AppColors.primary, size: 20),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'This is a demo. In production, you would authenticate with your saved passkey.',
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary,
+                      ),
                     ),
                   ),
                 ],
@@ -252,15 +346,21 @@ class _AuthenticateButton extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary),
+            ),
           ),
           ElevatedButton.icon(
             onPressed: () => Navigator.pop(context, true),
             icon: const Icon(LucideIcons.fingerprint),
             label: const Text('Authenticate'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(kRadius),
+              ),
             ),
           ),
         ],
@@ -272,6 +372,7 @@ class _AuthenticateButton extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: AppColors.success,
             content: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -280,7 +381,6 @@ class _AuthenticateButton extends StatelessWidget {
                 const Flexible(child: Text('Authentication successful!')),
               ],
             ),
-            backgroundColor: Colors.green,
           ),
         );
       }
@@ -294,44 +394,44 @@ class _PlatformAuthInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (platform, icon, color) = _getPlatformInfo();
+    final isDark = context.isDarkMode;
 
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            platform,
-            style: TextStyle(
-              fontSize: 14,
-              color: color,
-              fontWeight: FontWeight.w600,
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.15 : 0.08),
+        borderRadius: BorderRadius.circular(kRadius),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              platform,
+              style: TextStyle(
+                fontSize: 14,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   (String, IconData, Color) _getPlatformInfo() {
     try {
       if (kIsWeb) {
-        return ('Browser passkey dialog', LucideIcons.globe, Colors.blue);
+        return ('Browser passkey dialog', LucideIcons.globe, AppColors.primary);
       } else if (Platform.isMacOS) {
-        return (
-          'macOS Touch ID / Keychain',
-          LucideIcons.fingerprint,
-          Colors.purple
-        );
+        return ('macOS Touch ID / Keychain', LucideIcons.fingerprint, AppColors.purple);
       } else if (Platform.isIOS) {
-        return (
-          'iOS Face ID / Touch ID',
-          LucideIcons.smartphone,
-          Colors.orange
-        );
+        return ('iOS Face ID / Touch ID', LucideIcons.smartphone, AppColors.warning);
       }
     } catch (_) {}
-    return ('Platform authentication', LucideIcons.lock, Colors.grey);
+    return ('Platform authentication', LucideIcons.lock, AppColors.primary);
   }
 }
 
@@ -348,12 +448,16 @@ class _PasskeyListHeader extends StatelessWidget {
       children: [
         Text(
           'Stored Passkeys ($count)',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: context.textPrimaryColor,
+          ),
         ),
         TextButton.icon(
           onPressed: onClear,
-          icon: const Icon(LucideIcons.trash2, size: 14),
-          label: const Text('Clear All'),
+          icon: Icon(LucideIcons.trash2, size: 14, color: AppColors.error),
+          label: Text('Clear All', style: TextStyle(color: AppColors.error)),
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,
@@ -374,45 +478,60 @@ class _PasskeyItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, yyyy HH:mm');
+    final isDark = context.isDarkMode;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.purple.shade100,
-            borderRadius: BorderRadius.circular(8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: context.surfaceVariantColor,
+        borderRadius: BorderRadius.circular(kRadius),
+        border: Border.all(color: context.borderColor),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.purple.withValues(alpha: isDark ? 0.2 : 0.15),
+              borderRadius: BorderRadius.circular(kRadius),
+            ),
+            child: Icon(LucideIcons.key, color: AppColors.purple, size: 22),
           ),
-          child:
-              Icon(LucideIcons.key, color: Colors.purple.shade700, size: 24),
-        ),
-        title: Text(
-          passkey.displayName ?? passkey.username,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Username: ${passkey.username}',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  passkey.displayName ?? passkey.username,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: context.textPrimaryColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Username: ${passkey.username}',
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                ),
+                Text(
+                  'Created: ${dateFormat.format(passkey.createdAt)}',
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                ),
+                Text(
+                  'Last used: ${dateFormat.format(passkey.lastUsed)}',
+                  style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                ),
+              ],
             ),
-            Text(
-              'Created: ${dateFormat.format(passkey.createdAt)}',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-            ),
-            Text(
-              'Last used: ${dateFormat.format(passkey.lastUsed)}',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-            ),
-          ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(LucideIcons.trash2, size: 18, color: Colors.red),
-          onPressed: () => viewModel.removePasskey(passkey.id),
-          tooltip: 'Remove passkey',
-        ),
+          ),
+          IconButton(
+            icon: Icon(LucideIcons.trash2, size: 18, color: AppColors.error),
+            onPressed: () => viewModel.removePasskey(passkey.id),
+            tooltip: 'Remove passkey',
+          ),
+        ],
       ),
     );
   }
@@ -426,18 +545,22 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          Icon(LucideIcons.key, size: 48, color: Colors.grey.shade400),
+          Icon(LucideIcons.key, size: 48, color: context.iconSecondaryColor),
           const SizedBox(height: 8),
-          Text('No passkeys stored',
-              style: TextStyle(color: Colors.grey.shade600)),
+          Text(
+            'No passkeys stored',
+            style: TextStyle(
+              color: context.textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             'Create a passkey to get started',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+            style: TextStyle(color: context.textTertiaryColor, fontSize: 12),
           ),
         ],
       ),
     );
   }
 }
-
