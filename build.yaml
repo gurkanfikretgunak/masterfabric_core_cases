@@ -1,0 +1,25 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+      
+      injectable_generator|injectable_builder:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+          
+      injectable_generator|injectable_config_builder:
+        enabled: true
+        generate_for:
+          - lib/app/di/dependency_injection.dart
+
+      freezed|freezed:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+
+      flutter_gen_runner|flutter_gen_runner:
+        enabled: true

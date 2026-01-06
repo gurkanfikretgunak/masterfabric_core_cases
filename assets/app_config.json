@@ -1,0 +1,28 @@
+{
+  "appSettings": {
+    "appName": "Core Demo",
+    "appVersion": "1.0.0",
+    "buildNumber": 1
+  },
+  "uiConfiguration": {
+    "themeMode": "light",
+    "fontScale": 1.0,
+    "showPerformanceOverlay": false,
+    "devModeGrid": false,
+    "devModeSpacer": false
+  },
+  "splashConfiguration": {
+    "autoNavigate": true,
+    "style": "startup",
+    "duration": 2000,
+    "showLogo": true,
+    "showTitle": true,
+    "backgroundColor": "#FFFFFF",
+    "logoSize": 150.0,
+    "titleText": "Core Demo"
+  },
+  "apiConfiguration": {
+    "baseUrl": "https://api.example.com",
+    "timeout": 30000
+  }
+}

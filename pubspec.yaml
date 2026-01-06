@@ -1,0 +1,154 @@
+name: masterfabric_core_cases
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  masterfabric_core: ^0.0.4
+
+  flutter_bloc: ^9.1.0
+  go_router: ^15.1.3
+  get_it: ^8.3.0
+  equatable: ^2.0.7
+
+  lucide_icons_flutter: ^1.2.0
+
+  local_auth: ^2.3.0
+  
+  # Configuration & Dependencies
+  yaml: ^3.1.2
+  injectable: ^2.5.0
+  package_info_plus: ^8.1.2
+  intl: ^0.20.1
+  
+  # Networking & Storage
+  shared_preferences: ^2.3.4
+  dio: ^5.7.0
+  pretty_dio_logger: ^1.4.0
+  
+  # Code Generation
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  
+  # Code Generation Tools
+  build_runner: ^2.4.14
+  injectable_generator: ^2.6.2
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  flutter_gen_runner: ^5.8.0
+  flutter_launcher_icons: ^0.14.2
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/app_config.json
+    - assets/flavor_config.yaml
+
+# Type-safe asset generation
+flutter_gen:
+  output: lib/gen/
+  line_length: 80
+  
+  integrations:
+    flutter_svg: false
+    
+  assets:
+    enabled: true
+    
+  fonts:
+    enabled: true
+
+# Flavor-specific app icons configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  
+  # Default fallback icon (required)
+  image_path: "assets/icons/icon_dev.png"
+  image_path_android: "assets/icons/icon_dev.png"
+  image_path_ios: "assets/icons/icon_dev.png"
+  
+  # Flavor-specific icons (will override default when available)
+  flavors:
+    development:
+      android: true
+      ios: true
+      image_path: "assets/icons/icon_dev.png"
+      adaptive_icon_background: "#4CAF50"
+      adaptive_icon_foreground: "assets/icons/icon_dev_foreground.png"
+    
+    staging:
+      android: true
+      ios: true
+      image_path: "assets/icons/icon_staging.png"
+      adaptive_icon_background: "#FF9800"
+      adaptive_icon_foreground: "assets/icons/icon_staging_foreground.png"
+    
+    production:
+      android: true
+      ios: true
+      image_path: "assets/icons/icon_production.png"
+      adaptive_icon_background: "#2196F3"
+      adaptive_icon_foreground: "assets/icons/icon_production_foreground.png"
+
+  # Flavor configurations
+flavor_config:
+  development:
+    apiBaseUrl: "https://dev-api.example.com"
+    appName: "MasterFabric [DEV]"
+    debugMode: true
+    additionalConfig:
+      apiTimeout: 30
+      enableLogging: true
+      enableAnalytics: false
+      mockData: true
+      features:
+        bluetooth: true
+        passkeys: true
+        notifications: true
+  
+  staging:
+    apiBaseUrl: "https://staging-api.example.com"
+    appName: "MasterFabric [STAGING]"
+    debugMode: true
+    additionalConfig:
+      apiTimeout: 30
+      enableLogging: true
+      enableAnalytics: true
+      mockData: false
+      features:
+        bluetooth: true
+        passkeys: true
+        notifications: true
+  
+  production:
+    apiBaseUrl: "https://api.example.com"
+    appName: "MasterFabric"
+    debugMode: false
+    additionalConfig:
+      apiTimeout: 15
+      enableLogging: false
+      enableAnalytics: true
+      mockData: false
+      features:
+        bluetooth: true
+        passkeys: true
+        notifications: true
+

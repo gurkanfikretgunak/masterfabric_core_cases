@@ -1,0 +1,44 @@
+# Development Environment Configuration
+development:
+  apiBaseUrl: "https://dev-api.example.com"
+  appName: "MasterFabric [DEV]"
+  debugMode: true
+  additionalConfig:
+    apiTimeout: 30
+    enableLogging: true
+    enableAnalytics: false
+    mockData: true
+    features:
+      bluetooth: true
+      passkeys: true
+      notifications: true
+
+# Staging Environment Configuration
+staging:
+  apiBaseUrl: "https://staging-api.example.com"
+  appName: "MasterFabric [STAGING]"
+  debugMode: true
+  additionalConfig:
+    apiTimeout: 30
+    enableLogging: true
+    enableAnalytics: true
+    mockData: false
+    features:
+      bluetooth: true
+      passkeys: true
+      notifications: true
+
+# Production Environment Configuration
+production:
+  apiBaseUrl: "https://api.example.com"
+  appName: "MasterFabric"
+  debugMode: false
+  additionalConfig:
+    apiTimeout: 15
+    enableLogging: false
+    enableAnalytics: true
+    mockData: false
+    features:
+      bluetooth: true
+      passkeys: true
+      notifications: true
