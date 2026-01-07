@@ -101,7 +101,11 @@ class _ThemeColorSelector extends StatelessWidget {
     final textSecondary = isDark ? AppColors.dark.textSecondary : AppColors.light.textSecondary;
     final iconSecondary = isDark ? AppColors.dark.iconSecondary : AppColors.light.iconSecondary;
 
+    final cardColor = isDark ? AppColors.dark.card : AppColors.light.card;
+    
     return ExpansionTile(
+      backgroundColor: cardColor,
+      collapsedBackgroundColor: cardColor,
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -256,7 +260,11 @@ class _LanguageSelector extends StatelessWidget {
     final isDark = state.isDarkMode;
     final primary = AppColors.getThemeColor(state.primaryColor).primary;
     
+    final cardColor = isDark ? AppColors.dark.card : AppColors.light.card;
+    
     return ExpansionTile(
+      backgroundColor: cardColor,
+      collapsedBackgroundColor: cardColor,
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(

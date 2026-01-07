@@ -24,7 +24,9 @@ class MyApp extends StatelessWidget {
     return BlocBuilder<SettingsCubit, SettingsState>(
       bloc: settingsCubit,
       builder: (context, state) {
-        final currentTheme = state.isDarkMode ? AppTheme.dark : AppTheme.light;
+        final currentTheme = state.isDarkMode 
+            ? AppTheme.dark(state.primaryColor) 
+            : AppTheme.light(state.primaryColor);
         
         return FlavorBanner(
           show: showFlavorBanner,

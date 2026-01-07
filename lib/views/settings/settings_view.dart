@@ -109,52 +109,106 @@ class SettingsView
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InfoCard(
+                  key: ValueKey('info_card_${isDark}'),
                   icon: LucideIcons.info,
                   title: 'Persistent Settings with HydratedCubit',
                   description:
                       'All settings are automatically saved and restored when the app restarts.',
-                  accentColor: AppColors.primary,
+                  accentColor: AppColors.getThemeColor(settingsState.primaryColor).primary,
                 ),
                 const SizedBox(height: 24),
-                const SectionHeader(
+                SectionHeader(
+                  key: ValueKey('platform_header_${isDark}'),
                   icon: LucideIcons.smartphone,
                   title: 'Platform & Device Info',
                 ),
-                const PlatformInfoSection(),
+                PlatformInfoSection(key: ValueKey('platform_section_${isDark}')),
                 const SizedBox(height: 24),
-                const SectionHeader(icon: LucideIcons.palette, title: 'Appearance'),
-                AppearanceSection(viewModel: viewModel, state: settingsState),
+                SectionHeader(
+                  key: ValueKey('appearance_header_${isDark}'),
+                  icon: LucideIcons.palette,
+                  title: 'Appearance',
+                ),
+                AppearanceSection(
+                  key: ValueKey('appearance_section_${isDark}'),
+                  viewModel: viewModel,
+                  state: settingsState,
+                ),
                 const SizedBox(height: 24),
-                const SectionHeader(icon: LucideIcons.bell, title: 'Notifications'),
-                NotificationsSection(viewModel: viewModel, state: settingsState),
+                SectionHeader(
+                  key: ValueKey('notifications_header_${isDark}'),
+                  icon: LucideIcons.bell,
+                  title: 'Notifications',
+                ),
+                NotificationsSection(
+                  key: ValueKey('notifications_section_${isDark}'),
+                  viewModel: viewModel,
+                  state: settingsState,
+                ),
                 const SizedBox(height: 24),
-                const SectionHeader(
+                SectionHeader(
+                  key: ValueKey('security_header_${isDark}'),
                   icon: LucideIcons.lock,
                   title: 'Security & Privacy',
                 ),
-                SecuritySection(viewModel: viewModel, state: settingsState),
+                SecuritySection(
+                  key: ValueKey('security_section_${isDark}'),
+                  viewModel: viewModel,
+                  state: settingsState,
+                ),
                 const SizedBox(height: 24),
-                const SectionHeader(
+                SectionHeader(
+                  key: ValueKey('sound_header_${isDark}'),
                   icon: LucideIcons.volume2,
                   title: 'Sound & Haptics',
                 ),
-                SoundSection(viewModel: viewModel, state: settingsState),
+                SoundSection(
+                  key: ValueKey('sound_section_${isDark}'),
+                  viewModel: viewModel,
+                  state: settingsState,
+                ),
                 const SizedBox(height: 24),
-                const SectionHeader(icon: LucideIcons.wifi, title: 'Network & Data'),
-                NetworkSection(viewModel: viewModel, state: settingsState),
+                SectionHeader(
+                  key: ValueKey('network_header_${isDark}'),
+                  icon: LucideIcons.wifi,
+                  title: 'Network & Data',
+                ),
+                NetworkSection(
+                  key: ValueKey('network_section_${isDark}'),
+                  viewModel: viewModel,
+                  state: settingsState,
+                ),
                 const SizedBox(height: 24),
-                const SectionHeader(
+                SectionHeader(
+                  key: ValueKey('profile_header_${isDark}'),
                   icon: LucideIcons.user,
                   title: 'Profile Information',
                 ),
-                ProfileSection(state: settingsState),
+                ProfileSection(
+                  key: ValueKey('profile_section_${isDark}'),
+                  state: settingsState,
+                ),
                 const SizedBox(height: 24),
-                const SectionHeader(icon: LucideIcons.zap, title: 'Performance'),
-                PerformanceSection(viewModel: viewModel, state: settingsState),
+                SectionHeader(
+                  key: ValueKey('performance_header_${isDark}'),
+                  icon: LucideIcons.zap,
+                  title: 'Performance',
+                ),
+                PerformanceSection(
+                  key: ValueKey('performance_section_${isDark}'),
+                  viewModel: viewModel,
+                  state: settingsState,
+                ),
                 const SizedBox(height: 32),
-                StateDisplaySection(state: settingsState),
+                StateDisplaySection(
+                  key: ValueKey('state_display_${isDark}'),
+                  state: settingsState,
+                ),
                 const SizedBox(height: 16),
-                RawDataDisplaySection(state: settingsState),
+                RawDataDisplaySection(
+                  key: ValueKey('raw_data_${isDark}'),
+                  state: settingsState,
+                ),
               ],
             ),
           ),

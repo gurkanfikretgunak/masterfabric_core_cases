@@ -91,19 +91,20 @@ class _BiometricTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
+    final primary = context.primaryColor;
     
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: isAvailable 
-              ? AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1)
+              ? primary.withValues(alpha: isDark ? 0.2 : 0.1)
               : context.surfaceVariantColor,
           borderRadius: BorderRadius.circular(kRadius),
         ),
         child: Icon(
           LucideIcons.fingerprint,
-          color: isAvailable ? AppColors.primary : context.iconSecondaryColor,
+          color: isAvailable ? primary : context.iconSecondaryColor,
           size: 20,
         ),
       ),
@@ -137,7 +138,7 @@ class _BiometricTile extends StatelessWidget {
       trailing: Switch(
         value: state.biometricAuth && isAvailable,
         onChanged: isAvailable ? (_) => viewModel.toggleBiometricAuth() : null,
-        activeColor: AppColors.primary,
+        activeColor: primary,
       ),
     );
   }

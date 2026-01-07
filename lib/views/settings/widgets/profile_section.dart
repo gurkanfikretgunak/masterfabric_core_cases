@@ -63,15 +63,16 @@ class _ProfileTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
+    final primary = context.primaryColor;
     
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+          color: primary.withValues(alpha: isDark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(kRadius),
         ),
-        child: Icon(icon, color: AppColors.primary, size: 20),
+        child: Icon(icon, color: primary, size: 20),
       ),
       title: Text(
         title,

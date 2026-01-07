@@ -24,7 +24,7 @@ class MessageContainer extends StatelessWidget {
     final (color, icon) = switch (type) {
       MessageType.error => (AppColors.error, LucideIcons.circleAlert),
       MessageType.success => (AppColors.success, LucideIcons.check),
-      MessageType.info => (AppColors.primary, LucideIcons.info),
+      MessageType.info => (context.primaryColor, LucideIcons.info),
       MessageType.warning => (AppColors.warning, LucideIcons.triangleAlert),
     };
 

@@ -35,7 +35,7 @@ class RawDataDisplaySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final jsonData = state.toJson();
-    final isDark = context.isDarkMode;
+    final isDark = state.isDarkMode;
 
     return Container(
       decoration: BoxDecoration(
@@ -49,15 +49,13 @@ class RawDataDisplaySection extends StatelessWidget {
           ),
         ],
       ),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(kRadius),
         child: ExpansionTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(kRadius),
-          ),
-          collapsedShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(kRadius),
-          ),
+          backgroundColor: context.cardColor,
+          collapsedBackgroundColor: context.cardColor,
+          shape: const Border(),
+          collapsedShape: const Border(),
           leading: ThemedWidgets.iconBox(
             context: context,
             icon: LucideIcons.code,
@@ -122,7 +120,7 @@ class RawDataDisplaySection extends StatelessWidget {
                         IconButton(
                           icon: Icon(
                             LucideIcons.copy,
-                            color: AppColors.primary,
+                            color: context.primaryColor,
                             size: 18,
                           ),
                           onPressed: () {
@@ -175,7 +173,7 @@ class RawDataDisplaySection extends StatelessWidget {
                           children: [
                             Icon(
                               LucideIcons.info,
-                              color: AppColors.primary,
+                              color: context.primaryColor,
                               size: 14,
                             ),
                             const SizedBox(width: 6),

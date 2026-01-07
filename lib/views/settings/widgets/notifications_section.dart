@@ -90,19 +90,20 @@ class _PushNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
+    final primary = context.primaryColor;
     
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: isAvailable 
-              ? AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1)
+              ? primary.withValues(alpha: isDark ? 0.2 : 0.1)
               : context.surfaceVariantColor,
           borderRadius: BorderRadius.circular(kRadius),
         ),
         child: Icon(
           LucideIcons.smartphone,
-          color: isAvailable ? AppColors.primary : context.iconSecondaryColor,
+          color: isAvailable ? primary : context.iconSecondaryColor,
           size: 20,
         ),
       ),
@@ -136,7 +137,7 @@ class _PushNotificationTile extends StatelessWidget {
       trailing: Switch(
         value: state.pushNotifications && isAvailable,
         onChanged: isAvailable ? (_) => viewModel.togglePushNotifications() : null,
-        activeColor: AppColors.primary,
+        activeColor: primary,
       ),
     );
   }

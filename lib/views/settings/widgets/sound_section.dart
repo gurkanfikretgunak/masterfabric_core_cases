@@ -82,19 +82,20 @@ class _VibrationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
+    final primary = context.primaryColor;
     
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: isAvailable 
-              ? AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1)
+              ? primary.withValues(alpha: isDark ? 0.2 : 0.1)
               : context.surfaceVariantColor,
           borderRadius: BorderRadius.circular(kRadius),
         ),
         child: Icon(
           LucideIcons.vibrate,
-          color: isAvailable ? AppColors.primary : context.iconSecondaryColor,
+          color: isAvailable ? primary : context.iconSecondaryColor,
           size: 20,
         ),
       ),
@@ -125,7 +126,7 @@ class _VibrationTile extends StatelessWidget {
       trailing: Switch(
         value: state.vibration && isAvailable,
         onChanged: isAvailable ? (_) => viewModel.toggleVibration() : null,
-        activeColor: AppColors.primary,
+        activeColor: primary,
       ),
     );
   }

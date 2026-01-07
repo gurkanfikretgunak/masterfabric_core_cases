@@ -28,12 +28,12 @@ class StateDisplaySection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: context.primaryColor.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(kRadius),
                 ),
                 child: Icon(
                   LucideIcons.database,
-                  color: AppColors.primary,
+                  color: context.primaryColor,
                   size: 18,
                 ),
               ),

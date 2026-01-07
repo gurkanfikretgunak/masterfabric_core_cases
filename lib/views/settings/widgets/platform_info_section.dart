@@ -89,7 +89,7 @@ class _PlatformRow extends StatelessWidget {
         icon: LucideIcons.monitor,
         label: 'Platform',
         value: snapshot.data ?? 'Loading...',
-        color: kIsWeb ? AppColors.primary : AppColors.success,
+        color: kIsWeb ? context.primaryColor : AppColors.success,
       ),
     );
   }
@@ -221,7 +221,7 @@ class _AppInfoSection extends StatelessWidget {
               label: 'Build Number',
               value:
                   snapshot.hasData ? snapshot.data!.buildNumber : 'Loading...',
-              color: AppColors.primary,
+              color: context.primaryColor,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),

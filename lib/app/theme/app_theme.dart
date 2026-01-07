@@ -13,16 +13,17 @@ class AppTheme {
   // LIGHT THEME
   // ═══════════════════════════════════════════════════════════════════════════
 
-  static ThemeData get light {
+  static ThemeData light(String primaryColorName) {
     final colors = AppColors.light;
+    final primaryColor = AppColors.getThemeColor(primaryColorName);
 
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: colors.scaffold,
-      primaryColor: AppColors.getThemeColor('blue').primary,
+      primaryColor: primaryColor.primary,
       colorScheme: ColorScheme.light(
-        primary: AppColors.getThemeColor('blue').primary,
+        primary: primaryColor.primary,
         secondary: AppColors.purple,
         surface: colors.surface,
         error: AppColors.error,
@@ -112,13 +113,13 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.getThemeColor('blue').primary;
+            return primaryColor.primary;
           }
           return Colors.grey.shade400;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.getThemeColor('blue').primaryLight;
+            return primaryColor.primaryLight;
           }
           return Colors.grey.shade300;
         }),
@@ -185,7 +186,7 @@ class AppTheme {
       // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.getThemeColor('blue').primary,
+          backgroundColor: primaryColor.primary,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(kRadius),
@@ -200,16 +201,17 @@ class AppTheme {
   // DARK THEME
   // ═══════════════════════════════════════════════════════════════════════════
 
-  static ThemeData get dark {
+  static ThemeData dark(String primaryColorName) {
     final colors = AppColors.dark;
+    final primaryColor = AppColors.getThemeColor(primaryColorName);
 
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: colors.scaffold,
-      primaryColor: AppColors.getThemeColor('blue').primary,
+      primaryColor: primaryColor.primary,
       colorScheme: ColorScheme.dark(
-        primary: AppColors.getThemeColor('blue').primary,
+        primary: primaryColor.primary,
         secondary: AppColors.purple,
         surface: colors.surface,
         error: AppColors.error,
@@ -299,13 +301,13 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.getThemeColor('blue').primary;
+            return primaryColor.primary;
           }
           return Colors.grey.shade600;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.getThemeColor('blue').primary.withValues(alpha: 0.5);
+            return primaryColor.primary.withValues(alpha: 0.5);
           }
           return Colors.grey.shade700;
         }),
@@ -343,7 +345,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kRadius),
-          borderSide: BorderSide(color: AppColors.getThemeColor('blue').primary),
+          borderSide: BorderSide(color: primaryColor.primary),
         ),
       ),
 
@@ -372,7 +374,7 @@ class AppTheme {
       // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.getThemeColor('blue').primary,
+          backgroundColor: primaryColor.primary,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(kRadius),
