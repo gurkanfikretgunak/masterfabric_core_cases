@@ -256,8 +256,8 @@ class _HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Raw Settings Card
-          const RawSettingsCard(),
+          // Raw Settings Card - Key ensures rebuild on theme change
+          RawSettingsCard(key: ValueKey('raw_settings_${isDark}')),
           const SizedBox(height: 80),
         ],
       ),
