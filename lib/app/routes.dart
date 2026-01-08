@@ -4,6 +4,8 @@ import 'package:masterfabric_core_cases/app/flavor/widgets/flavor_banner.dart';
 import 'package:masterfabric_core_cases/views/home/home_view.dart';
 import 'package:masterfabric_core_cases/views/settings/settings_view.dart';
 import 'package:masterfabric_core_cases/views/web_apis/web_apis_view.dart';
+import 'package:masterfabric_core_cases/views/hive_ce/hive_ce_view.dart';
+import 'package:masterfabric_core_cases/views/bottom_sheet_test/bottom_sheet_test_view.dart';
 
 /// Application route definitions
 class AppRoutes {
@@ -11,6 +13,8 @@ class AppRoutes {
   static const String home = '/home';
   static const String settings = '/settings';
   static const String webApis = '/web-apis';
+  static const String hiveCe = '/hive-ce';
+  static const String bottomSheetTest = '/bottom-sheet-test';
 
   /// Create GoRouter configuration
   static GoRouter createRouter() {
@@ -46,6 +50,20 @@ class AppRoutes {
           path: webApis,
           builder: (context, state) =>
               WebApisView(goRoute: (path) => context.go(path)),
+        ),
+
+        // Hive CE Route (HiveCeHelper Demo)
+        GoRoute(
+          path: hiveCe,
+          builder: (context, state) =>
+              HiveCeView(goRoute: (path) => context.go(path)),
+        ),
+
+        // Bottom Sheet Test Route
+        GoRoute(
+          path: bottomSheetTest,
+          builder: (context, state) =>
+              BottomSheetTestView(goRoute: (path) => context.go(path)),
         ),
       ],
     );

@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  masterfabric_core: ^0.0.4
+  masterfabric_core: ^0.0.6
 
   flutter_bloc: ^9.1.0
   go_router: ^15.1.3

@@ -242,6 +242,26 @@ class _HomeContent extends StatelessWidget {
             iconColor: AppColors.purple,
             iconBgColor: AppColors.purpleLight,
           ),
+          const SizedBox(height: 10),
+          _NavigationTile(
+            isDark: isDark,
+            icon: LucideIcons.database,
+            title: 'Hive CE Helper',
+            subtitle: 'How to use HiveCeHelper feature',
+            onTap: () => goRoute(AppRoutes.hiveCe),
+            iconColor: AppColors.cyan,
+            iconBgColor: AppColors.cyanLight,
+          ),
+          const SizedBox(height: 10),
+          _NavigationTile(
+            isDark: isDark,
+            icon: LucideIcons.layoutList,
+            title: 'Bottom Sheet Test',
+            subtitle: 'Abstract-based bottom sheet system',
+            onTap: () => goRoute(AppRoutes.bottomSheetTest),
+            iconColor: AppColors.purple,
+            iconBgColor: AppColors.purpleLight,
+          ),
           const SizedBox(height: 32),
 
           // Divider with explanation
